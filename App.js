@@ -1,38 +1,51 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
+import React, { useState } from "react";
+import { StatusBar } from "expo-status-bar";
+import { StyleSheet, Text, View, TextInput, Button } from "react-native";
 
 export default function App() {
+  const [guess, setGuess] = useState("");
+  const [guesses, setGuesses] = useState([]);
+
+  const handleGuess = () => {
+    if (guess.length === 5) {
+      setGuesses([...guesses, guess]);
+      setGuess("");
+    }
+  };
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Wordle Clone</Text>
-      <View style={styles.grid}>
-        {Array.from({ length: 6 }, (_, index) => (
-            <View key={index} style={styles.row}>
-              {Array.from({ length: 5 }, (_, i) => (
-                  <View key={i} style={styles.cell}>
-                    <Text style={styles.cellText}> </Text>
-                  </View>
-              ))}
-            </View>
-        ))}
+      <View style={styles.container}>
+        <Text style={styles.title}>Wordle Clone</Text>
+        <View style={styles.grid}>
+          {Array.from({ length: 6 }, (_, index) => (
+              <View key={index} style={styles.row}>
+                {(guesses[index] || "     ").split("").map((char, i) => (
+                    <View key={i} style={styles.cell}>
+                      <Text style={styles.cellText}>{char.toUpperCase()}</Text>
+                    </View>
+                ))}
+              </View>
+          ))}
+        </View>
+        <TextInput
+            style={styles.input}
+            placeholder="Enter your guess"
+            value={guess}
+            onChangeText={setGuess}
+            maxLength={5}
+        />
+        <Button title="Submit Guess" onPress={handleGuess} />
+        <StatusBar style="auto" />
       </View>
-      <TextInput
-          style={styles.input}
-          placeholder="Enter your guess"
-          maxLength={5}
-      />
-      <Button title="Submit Guess" onPress={() => {}} />
-      <StatusBar style="auto" />
-    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
   },
   title: {
     fontSize: 24,
