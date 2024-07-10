@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
 
 export default function App() {
   return (
@@ -16,6 +16,12 @@ export default function App() {
             </View>
         ))}
       </View>
+      <TextInput
+          style={styles.input}
+          placeholder="Enter your guess"
+          maxLength={5}
+      />
+      <Button title="Submit Guess" onPress={() => {}} />
       <StatusBar style="auto" />
     </View>
   );
@@ -49,5 +55,14 @@ const styles = StyleSheet.create({
   },
   cellText: {
     fontSize: 24,
+  },
+  input: {
+    height: 40,
+    borderColor: "gray",
+    borderWidth: 1,
+    paddingHorizontal: 10,
+    marginBottom: 10,
+    maxWidth: 300,
+    width: "80%",
   },
 });
