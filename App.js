@@ -1,26 +1,54 @@
-import React, { useState } from "react";
-import {  StatusBar } from "expo-status-bar";
-import { Alert, StyleSheet, Text, View, TextInput, Button } from "react-native";
+import React, { useState, useEffect } from "react";
+import { Alert, StatusBar, StyleSheet, Text, View, TextInput, Button } from "react-native";
+import { wordList } from "./words.js";
 
 export default function App() {
   const [guess, setGuess] = useState("");
   const [guesses, setGuesses] = useState([]);
-  const targetWord = "apple";
+  const [targetWord, setTargetWord] = useState("");
+  const [gameOver, setGameOver] = useState(false);
+
+  useEffect(() => {
+    resetGame();
+  }, []);
+
+  const resetGame = () => {
+    const wordsArray = wordList;
+    setTargetWord(wordsArray[Math.floor(Math.random() * wordsArray.length)]);
+    setGuesses([]);
+    setGuess("");
+    setGameOver(false);
+  };
 
   const handleGuess = () => {
     const lowerCaseGuess = guess.toLowerCase();
-    if (lowerCaseGuess.length === 5) {
+    if (lowerCaseGuess.length === 5 && wordList.includes(lowerCaseGuess)) {
       const newGuesses = [...guesses, lowerCaseGuess];
       setGuesses(newGuesses);
       setGuess("");
 
       if (lowerCaseGuess === targetWord) {
-        Alert.alert("Congratulations!", "You've guessed the word!");
+        Alert.alert("Congratulations!", "You've guessed the word!", [
+          {
+            text: "OK",
+            onPress: () => {
+              resetGame();
+            },
+          },
+        ]);
       } else if (newGuesses.length >= 6) {
-        Alert.alert("Game Over", `The word was: ${targetWord}`);
+        setGameOver(true);
+        Alert.alert("Game Over", `The word was: ${targetWord}`, [
+          {
+            text: "OK",
+            onPress: () => {
+              resetGame();
+            },
+          },
+        ]);
       }
     } else {
-      Alert.alert("Invalid guess", "Guess must be 5 letters long.");
+      Alert.alert("Invalid guess", "This word was not found in the list.");
     }
   };
 
@@ -61,14 +89,18 @@ export default function App() {
               </View>
           ))}
         </View>
-        <TextInput
-            style={styles.input}
-            placeholder="Enter your guess"
-            value={guess}
-            onChangeText={setGuess}
-            maxLength={5}
-        />
-        <Button title="Submit Guess" onPress={handleGuess} />
+        {!gameOver && (
+            <>
+              <TextInput
+                  style={styles.input}
+                  placeholder="Enter your guess"
+                  value={guess}
+                  onChangeText={setGuess}
+                  maxLength={5}
+              />
+              <Button title="Submit Guess" onPress={handleGuess} />
+            </>
+        )}
         <StatusBar style="auto" />
       </View>
   );
